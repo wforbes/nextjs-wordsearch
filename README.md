@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Word Search Game
+
+A modern, interactive word search puzzle game built with Next.js and TypeScript. Players can find hidden words by selecting letters in horizontal, vertical, or diagonal directions.
+
+## Features
+
+- 15x15 grid of randomized letters
+- 10 randomly selected words hidden in the grid
+- Multiple word placement directions:
+  - Horizontal (left to right)
+  - Vertical (top to bottom)
+  - Diagonal (top-left to bottom-right)
+- Interactive word finding:
+  - Click and drag to select letters
+  - Forgiving diagonal selection system
+  - Visual feedback for selections
+  - Words can be found forwards or backwards
+- Progress tracking:
+  - Found words are marked off the list
+  - Letters in found words are greyed out in the grid
+  - Win detection with congratulations message
+- Developer features:
+  - God Mode for highlighting hidden word locations
+  - Comprehensive test coverage with Vitest
+  - TypeScript for type safety
 
 ## Getting Started
 
-First, run the development server:
-
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Run the development server:
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Open [http://localhost:3000](http://localhost:3000) with your browser to play the game.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Development
 
-## Learn More
+- Run tests:
+```bash
+npm test
+```
 
-To learn more about Next.js, take a look at the following resources:
+- Run tests in watch mode:
+```bash
+npm run test:watch
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Run tests with coverage:
+```bash
+npm run test:coverage
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Technologies Used
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS
+- Vitest for testing
+- React Testing Library
