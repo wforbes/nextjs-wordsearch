@@ -21,7 +21,7 @@ A modern, interactive word search puzzle game built with Next.js and TypeScript.
   - Win detection with congratulations message
 - Developer features:
   - God Mode for highlighting hidden word locations
-  - Comprehensive test coverage with Vitest
+  - Test coverage with Vitest
   - TypeScript for type safety
 
 ## Getting Started
