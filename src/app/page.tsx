@@ -6,6 +6,7 @@ import { WinDialog } from "./components/WinDialog/WinDialog";
 
 export default function Home() {
   const [gameWon, setGameWon] = useState(false);
+  const [gameKey, setGameKey] = useState(0);
 
   const handleGameWon = () => {
     setGameWon(true);
@@ -13,12 +14,13 @@ export default function Home() {
 
   const handlePlayAgain = () => {
     setGameWon(false);
+    setGameKey(prev => prev + 1);
   };
 
   return (
     <div className="min-h-screen p-8 flex flex-col items-center gap-8">
       <h1 className="text-3xl font-bold">Word Search Game</h1>
-      <GameController onGameWon={handleGameWon} />
+      <GameController key={gameKey} gameKey={gameKey} onGameWon={handleGameWon} />
       {gameWon && <WinDialog onPlayAgain={handlePlayAgain} />}
     </div>
   );

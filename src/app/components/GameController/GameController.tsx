@@ -12,9 +12,10 @@ import {
 
 type GameControllerProps = {
   onGameWon: () => void;
+  gameKey: number;
 };
 
-export function GameController({ onGameWon }: GameControllerProps) {
+export function GameController({ onGameWon, gameKey }: GameControllerProps) {
   const [grid, setGrid] = useState<Cell[][]>([]);
   const [wordLocations, setWordLocations] = useState<WordLocation[]>([]);
 
