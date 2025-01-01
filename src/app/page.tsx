@@ -1,27 +1,52 @@
 "use client";
 
-import { useState } from "react";
-import { GameController } from "./components/GameController/GameController";
-import { WinDialog } from "./components/WinDialog/WinDialog";
+import { useRouter } from "next/navigation";
+import NavBar from "./components/NavBar/NavBar";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 export default function Home() {
-  const [gameWon, setGameWon] = useState(false);
-  const [gameKey, setGameKey] = useState(0);
+  const router = useRouter();
 
-  const handleGameWon = () => {
-    setGameWon(true);
-  };
-
-  const handlePlayAgain = () => {
-    setGameWon(false);
-    setGameKey(prev => prev + 1);
+  const handleStartGame = () => {
+    router.push('/game');
   };
 
   return (
-    <div className="min-h-screen p-8 flex flex-col items-center gap-8">
-      <h1 className="text-3xl font-bold">Word Search Game</h1>
-      <GameController key={gameKey} gameKey={gameKey} onGameWon={handleGameWon} />
-      {gameWon && <WinDialog onPlayAgain={handlePlayAgain} />}
+    <div className="min-h-screen flex flex-col">
+      <NavBar />
+      <Box 
+        component="main" 
+        sx={{
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 4,
+          p: 4
+        }}
+      >
+        <Typography variant="h2" component="h1" gutterBottom>
+          Word Search Game
+        </Typography>
+        <Typography variant="h5" component="h2" gutterBottom color="text.secondary">
+          Ready to start finding words?
+        </Typography>
+        <Button 
+          variant="contained" 
+          size="large"
+          onClick={handleStartGame}
+          sx={{ 
+            px: 4,
+            py: 1.5,
+            fontSize: '1.2rem'
+          }}
+        >
+          Start Searching
+        </Button>
+      </Box>
     </div>
   );
 }
