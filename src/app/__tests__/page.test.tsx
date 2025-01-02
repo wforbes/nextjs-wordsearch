@@ -1,69 +1,34 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import mockRouter from 'next-router-mock';
 import Home from '../page';
 
-describe('WordSearch Game', () => {
-	it('renders the game title', () => {
+describe('Home Page', () => {
+
+	it('renders the main heading', () => {
 		render(<Home />);
-		expect(screen.getByText('Word Search Game')).toBeDefined();
+		const heading = screen.getByRole('heading', { name: 'Word Search Game', level: 1 });
+		expect(heading).toBeDefined();
 	});
 
-	it('initializes with a complete game setup', () => {
+	it('renders the subtitle', () => {
 		render(<Home />);
-
-		// Check for grid
-		const gridCells = screen.getAllByRole('gridcell');
-		expect(gridCells.length).toBe(15 * 15);
-
-		// Check for word list
-		expect(screen.getByText('Words to Find:')).toBeDefined();
-		const wordElements = screen.getAllByTestId('word-item');
-		expect(wordElements.length).toBe(10);
+		const subtitle = screen.getByRole('heading', { name: 'Ready to start finding words?', level: 2 });
+		expect(subtitle).toBeDefined();
 	});
 
-	it('allows word selection and shows win dialog when all words are found', () => {
+	it('renders the start button', () => {
 		render(<Home />);
-
-		// Get all words to find
-		const wordElements = screen.getAllByTestId('word-item');
-		const firstWord = wordElements[0].textContent!;
-
-		// Find this word in the grid by checking all cells
-		const gridCells = screen.getAllByRole('gridcell');
-		const firstWordCells = gridCells.filter(cell => cell.textContent === firstWord[0]);
-
-		// Try selecting from each potential starting point
-		firstWordCells.forEach(startCell => {
-			fireEvent.mouseDown(startCell);
-
-			// Try all adjacent cells
-			const adjacentCells = gridCells.filter(cell =>
-				cell !== startCell && cell.textContent === firstWord[1]
-			);
-
-			adjacentCells.forEach(nextCell => {
-				fireEvent.mouseEnter(nextCell);
-				fireEvent.mouseUp(nextCell);
-			});
-		});
-
-		// The win dialog might appear if we found all words
-		const winDialog = screen.queryByText('Congratulations!');
-		if (winDialog) {
-			expect(screen.getByText('Play Again')).toBeDefined();
-		}
+		const button = screen.getByRole('button', { name: 'Start Searching' });
+		expect(button).toBeDefined();
 	});
 
-	it('handles cell selection with proper styling', () => {
+	it('navigates to game page when start button is clicked', () => {
 		render(<Home />);
-		const cell = screen.getByTestId('cell-0-0');
-
-		// Test selection
-		fireEvent.mouseDown(cell);
-		expect(cell.className).includes('bg-black text-white');
-
-		// Test deselection
-		fireEvent.mouseUp(cell);
-		expect(cell.className).not.includes('bg-black text-white');
+		const button = screen.getByRole('button', { name: 'Start Searching' });
+		
+		fireEvent.click(button);
+		
+		expect(mockRouter.asPath).toBe('/game');
 	});
 });
