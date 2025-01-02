@@ -1,4 +1,10 @@
-import { beforeAll, vi } from 'vitest';
+import { cleanup } from '@testing-library/react';
+import { beforeAll, beforeEach, vi } from 'vitest';
+
+beforeEach(() => {
+	cleanup();
+	vi.clearAllMocks();
+});
 
 beforeAll(() => {
   vi.mock('next/navigation', async (importOriginal) => {
