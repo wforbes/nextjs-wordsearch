@@ -12,17 +12,20 @@ import {
 } from '@mui/material';
 import NavBar from '@/app/components/NavBar/NavBar';
 import { en } from '@/i18n/en';
+import { signUpValidation, type SignUpInput } from './_lib/validation';
 import { signUp } from '@/app/actions/auth';
 
 export default function SignUpPage() {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState(false);
+	const [validationErrors, setValidationErrors] = useState<Partial<Record<keyof SignUpInput, string>>>({});
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		setLoading(true);
 		setError(null);
+		setValidationErrors({});
 
 		const formData = new FormData(event.currentTarget);
 		const data = {
@@ -31,12 +34,25 @@ export default function SignUpPage() {
 			password: formData.get('password') as string,
 		};
 
+		// Validate form data
+		const result = signUpValidation.safeParse(data);
+		if (!result.success) {
+			const errors: Partial<Record<keyof SignUpInput, string>> = {};
+			result.error.issues.forEach((issue) => {
+				const path = issue.path[0] as keyof SignUpInput;
+				errors[path] = issue.message;
+			});
+			setValidationErrors(errors);
+			setLoading(false);
+			return;
+		}
+
 		try {
-			const result = await signUp(data);
-			if (result.success) {
+			const response = await signUp(data);
+			if (response.success) {
 				setSuccess(true);
 			} else {
-				setError(result.message);
+				setError(response.message);
 			}
 		} catch (err) {
 			console.error('Sign up error:', err);
@@ -90,6 +106,8 @@ export default function SignUpPage() {
 							autoComplete="name"
 							autoFocus
 							disabled={loading}
+							error={!!validationErrors.name}
+							helperText={validationErrors.name}
 						/>
 						<TextField
 							margin="normal"
@@ -100,6 +118,8 @@ export default function SignUpPage() {
 							name="email"
 							autoComplete="email"
 							disabled={loading}
+							error={!!validationErrors.email}
+							helperText={validationErrors.email}
 						/>
 						<TextField
 							margin="normal"
@@ -111,6 +131,8 @@ export default function SignUpPage() {
 							id="password"
 							autoComplete="new-password"
 							disabled={loading}
+							error={!!validationErrors.password}
+							helperText={validationErrors.password}
 						/>
 						<Button
 							type="submit"

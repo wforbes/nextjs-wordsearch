@@ -1,29 +1,73 @@
 'use server';
 
-import { en } from '@/i18n/en';
+import bcrypt from 'bcryptjs'
+import { supabase } from '@/lib/supabase'
+import { signUpValidation, type SignUpInput } from '@/app/signup/_lib/validation'
+import crypto from 'crypto'
 
-interface SignUpData {
-	name: string;
-	email: string;
-	password: string;
-}
+export async function signUp(data: SignUpInput) {
+	// Validate input
+	const result = signUpValidation.safeParse(data)
+	if (!result.success) {
+		return {
+			success: false,
+			message: 'Invalid input data'
+		}
+	}
 
-export async function signUp(data: SignUpData) {
 	try {
-		console.log('Sign up data:', data);
-		// TODO: Add actual user creation logic
-		// For now, just simulate a delay and return success
-		await new Promise(resolve => setTimeout(resolve, 1000));
+		// Check if user already exists
+		const { data: existingUser } = await supabase
+			.from('users')
+			.select('id')
+			.eq('email', data.email.toLowerCase())
+			.single()
+
+		if (existingUser) {
+			return {
+				success: false,
+				message: 'A user with this email already exists'
+			}
+		}
+
+		// Hash password
+		const hashedPassword = await bcrypt.hash(data.password, 10)
+
+		// Generate unique ID
+		const userId = crypto.randomUUID()
+		const now = new Date().toISOString()
+
+		// Create user
+		const { error: createError } = await supabase
+			.from('users')
+			.insert({
+				id: userId,
+				name: data.name,
+				email: data.email.toLowerCase(),
+				password: hashedPassword,
+				emailVerified: null,
+				image: null,
+				created_at: now,
+				updated_at: now
+			})
+
+		if (createError) {
+			console.error('Error creating user:', createError)
+			return {
+				success: false,
+				message: 'Failed to create user account'
+			}
+		}
 
 		return {
 			success: true,
-			message: en.pages.auth.signup.successMessage
-		};
+			message: 'Account created successfully'
+		}
 	} catch (error) {
-		console.error('Sign up error:', error);
+		console.error('Sign up error:', error)
 		return {
 			success: false,
-			message: error instanceof Error ? error.message : 'Failed to create account'
-		};
+			message: 'An unexpected error occurred'
+		}
 	}
 }
