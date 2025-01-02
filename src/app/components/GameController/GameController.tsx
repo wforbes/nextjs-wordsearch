@@ -15,6 +15,7 @@ type GameControllerProps = {
 	gameKey: number;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function GameController({ onGameWon, gameKey }: GameControllerProps) {
 	const [grid, setGrid] = useState<Cell[][]>([]);
 	const [wordLocations, setWordLocations] = useState<WordLocation[]>([]);
