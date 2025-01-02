@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import MenuIcon from '@mui/icons-material/Menu';
 import Link from 'next/link';
+import { en } from '@/i18n/en';
 
 export default function NavBar() {
 	return (
@@ -24,9 +25,13 @@ export default function NavBar() {
 				<Box sx={{ flexGrow: 1 }} />
 				<Box sx={{ display: 'flex', gap: 1 }}>
 					<Link href="/signup" style={{ textDecoration: 'none', color: 'inherit' }}>
-						<Button color="inherit" sx={{ color: 'inherit' }}>Sign Up</Button>
+						<Button color="inherit" sx={{ color: 'inherit' }}>
+							{en.components.navbar.signupButton}
+						</Button>
 					</Link>
-					<Button color="inherit">Login</Button>
+					<Button color="inherit">
+						{en.components.navbar.loginButton}
+					</Button>
 				</Box>
 			</Toolbar>
 		</AppBar>

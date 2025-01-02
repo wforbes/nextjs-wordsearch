@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import { en } from "@/i18n/en";
 
 export default function Home() {
 	const router = useRouter();
@@ -36,10 +37,10 @@ export default function Home() {
 					}}
 				>
 					<Typography variant="h2" component="h1" gutterBottom>
-						Word Search Game
+						{en.pages.home.title}
 					</Typography>
 					<Typography variant="h5" component="h2" gutterBottom color="text.secondary">
-						Ready to start finding words?
+						{en.pages.home.subtitle}
 					</Typography>
 					<Button
 						variant="contained"
@@ -51,7 +52,7 @@ export default function Home() {
 							fontSize: '1.2rem'
 						}}
 					>
-						Start Searching
+						{en.pages.home.startButton}
 					</Button>
 				</Box>
 			</Container>
