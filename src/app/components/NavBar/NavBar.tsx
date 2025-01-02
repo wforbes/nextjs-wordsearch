@@ -1,5 +1,3 @@
-'use client';
-
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -8,8 +6,12 @@ import Button from '@mui/material/Button';
 import MenuIcon from '@mui/icons-material/Menu';
 import Link from 'next/link';
 import { en } from '@/i18n/en';
+import { auth } from '@/auth';
+import { LogoutButton } from '@/app/components/NavBar/LogoutButton';
 
-export default function NavBar() {
+export default async function NavBar() {
+	const session = await auth();
+	
 	return (
 		<AppBar position="static">
 			<Toolbar>
@@ -24,14 +26,22 @@ export default function NavBar() {
 				</IconButton>
 				<Box sx={{ flexGrow: 1 }} />
 				<Box sx={{ display: 'flex', gap: 1 }}>
-					<Link href="/signup" style={{ textDecoration: 'none', color: 'inherit' }}>
-						<Button color="inherit" sx={{ color: 'inherit' }}>
-							{en.components.navbar.signupButton}
-						</Button>
-					</Link>
-					<Button color="inherit">
-						{en.components.navbar.loginButton}
-					</Button>
+					{session ? (
+						<LogoutButton />
+					) : (
+						<>
+							<Link href="/signup" style={{ textDecoration: 'none', color: 'inherit' }}>
+								<Button color="inherit" sx={{ color: 'inherit' }}>
+									{en.components.navbar.signupButton}
+								</Button>
+							</Link>
+							<Link href="/login" style={{ textDecoration: 'none', color: 'inherit' }}>
+								<Button color="inherit">
+									{en.components.navbar.loginButton}
+								</Button>
+							</Link>
+						</>
+					)}
 				</Box>
 			</Toolbar>
 		</AppBar>

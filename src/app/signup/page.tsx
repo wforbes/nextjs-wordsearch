@@ -9,8 +9,8 @@ import {
 	Button,
 	Alert,
 	CircularProgress,
+	Link,
 } from '@mui/material';
-import NavBar from '@/app/components/NavBar/NavBar';
 import { en } from '@/i18n/en';
 import { signUpValidation, type SignUpInput } from './_lib/validation';
 import { signUp } from '@/app/actions/auth';
@@ -64,7 +64,6 @@ export default function SignUpPage() {
 
 	return (
 		<div className="min-h-screen flex flex-col">
-			<NavBar />
 			<Container
 				component="main"
 				maxWidth="xs"
@@ -147,6 +146,13 @@ export default function SignUpPage() {
 								en.pages.auth.signup.submitButton
 							)}
 						</Button>
+						<Typography variant="body1" sx={{ mt: 1, textAlign: 'center' }}>
+							Already have an account?{' '}
+							<Link href="/login">
+								Sign in
+							</Link>.
+						</Typography>
+						
 					</Box>
 				</Box>
 			</Container>

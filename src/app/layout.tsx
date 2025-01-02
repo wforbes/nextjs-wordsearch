@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ThemeRegistry from './components/ThemeRegistry/ThemeRegistry';
+import NavBar from './components/NavBar/NavBar';
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default function RootLayout({
 			</head>
 			<body>
 				<ThemeRegistry>
+					<NavBar />
 					{children}
 				</ThemeRegistry>
 			</body>

@@ -20,6 +20,11 @@ export const en = {
 				passwordLabel: 'Password',
 				submitButton: 'Login',
 			},
+			signout: {
+				title: 'Signed Out',
+				message: 'You have been successfully signed out.',
+				returnHome: 'Return to Home Page',
+			},
 		},
 		game: {
 			// Add game-related text when needed
@@ -27,9 +32,10 @@ export const en = {
 	},
 	components: {
 		navbar: {
-			menuAriaLabel: 'menu',
-			signupButton: 'Sign Up',
+			title: 'Your App Name',
 			loginButton: 'Login',
+			signupButton: 'Sign Up',
+			logoutButton: 'Logout',
 		},
 	},
 } as const;

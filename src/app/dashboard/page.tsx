@@ -1,10 +1,18 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
 import { en } from "@/i18n/en";
 
-export default function Home() {
+export default function DashboardPage() {
+	const router = useRouter();
+
+	const handleStartGame = () => {
+		router.push('/game');
+	};
 
 	return (
 		<div className="min-h-screen flex flex-col items-center justify-center">
@@ -21,8 +29,20 @@ export default function Home() {
 					{en.pages.home.title}
 				</Typography>
 				<Typography variant="h5" component="h2" gutterBottom color="text.secondary">
-					Create an account or login to start playing!
+					{en.pages.home.subtitle}
 				</Typography>
+				<Button
+					variant="contained"
+					size="large"
+					onClick={handleStartGame}
+					sx={{
+						px: 4,
+						py: 1.5,
+						fontSize: '1.2rem'
+					}}
+				>
+					{en.pages.home.startButton}
+				</Button>
 			</Box>
 		</div>
 	);
