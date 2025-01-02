@@ -8,6 +8,7 @@ import {
 	Button,
 } from '@mui/material';
 import NavBar from '@/app/components/NavBar/NavBar';
+import { en } from '@/i18n/en';
 
 export default function SignUpPage() {
 	return (
@@ -31,7 +32,7 @@ export default function SignUpPage() {
 					}}
 				>
 					<Typography component="h1" variant="h5">
-						Sign up
+						{en.pages.auth.signup.title}
 					</Typography>
 					<Box component="form" sx={{ width: '100%' }}>
 						<TextField
@@ -39,7 +40,7 @@ export default function SignUpPage() {
 							required
 							fullWidth
 							id="name"
-							label="Full Name"
+							label={en.pages.auth.signup.nameLabel}
 							name="name"
 							autoComplete="name"
 							autoFocus
@@ -49,7 +50,7 @@ export default function SignUpPage() {
 							required
 							fullWidth
 							id="email"
-							label="Email Address"
+							label={en.pages.auth.signup.emailLabel}
 							name="email"
 							autoComplete="email"
 						/>
@@ -58,7 +59,7 @@ export default function SignUpPage() {
 							required
 							fullWidth
 							name="password"
-							label="Password"
+							label={en.pages.auth.signup.passwordLabel}
 							type="password"
 							id="password"
 							autoComplete="new-password"
@@ -69,7 +70,7 @@ export default function SignUpPage() {
 							variant="contained"
 							sx={{ mt: 3, mb: 2 }}
 						>
-							Sign Up
+							{en.pages.auth.signup.submitButton}
 						</Button>
 					</Box>
 				</Box>
