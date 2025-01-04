@@ -11,9 +11,9 @@ import { LogoutButton } from '@/app/components/NavBar/LogoutButton';
 
 export default async function NavBar() {
 	const session = await auth();
-	
+
 	return (
-		<AppBar position="static">
+		<AppBar position="static" data-testid="navbar">
 			<Toolbar>
 				<IconButton
 					size="large"
