@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
 import { en } from "@/i18n/en";
 
 export default function DashboardPage() {
@@ -26,10 +25,10 @@ export default function DashboardPage() {
 				}}
 			>
 				<Typography variant="h2" component="h1" gutterBottom>
-					{en.pages.home.title}
+					{en.pages.dashboard.title}
 				</Typography>
 				<Typography variant="h5" component="h2" gutterBottom color="text.secondary">
-					{en.pages.home.subtitle}
+					{en.pages.dashboard.subtitle}
 				</Typography>
 				<Button
 					variant="contained"
@@ -41,7 +40,7 @@ export default function DashboardPage() {
 						fontSize: '1.2rem'
 					}}
 				>
-					{en.pages.home.startButton}
+					{en.pages.dashboard.startButton}
 				</Button>
 			</Box>
 		</div>

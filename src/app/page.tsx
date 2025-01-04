@@ -7,7 +7,10 @@ import { en } from "@/i18n/en";
 export default function Home() {
 
 	return (
-		<div className="min-h-screen flex flex-col items-center justify-center">
+		<div 
+			className="min-h-screen flex flex-col items-center justify-center"
+			data-testid="home-container"
+		>
 			<Box
 				sx={{
 					width: '100%',
@@ -21,7 +24,7 @@ export default function Home() {
 					{en.pages.home.title}
 				</Typography>
 				<Typography variant="h5" component="h2" gutterBottom color="text.secondary">
-					Create an account or login to start playing!
+					{en.pages.home.subtitle}
 				</Typography>
 			</Box>
 		</div>

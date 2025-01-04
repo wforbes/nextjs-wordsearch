@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
-import mockRouter from 'next-router-mock';
+import { render, screen } from '@testing-library/react';
 import Home from '../page';
 import { en } from '@/i18n/en';
 
@@ -17,18 +16,14 @@ describe('Home Page', () => {
 		expect(subtitle).toBeDefined();
 	});
 
-	it('renders the start button', () => {
+	it('renders with the correct layout classes', () => {
 		render(<Home />);
-		const button = screen.getByRole('button', { name: en.pages.home.startButton });
-		expect(button).toBeDefined();
-	});
-
-	it('navigates to game page when start button is clicked', () => {
-		render(<Home />);
-		const button = screen.getByRole('button', { name: en.pages.home.startButton });
-		
-		fireEvent.click(button);
-		
-		expect(mockRouter.asPath).toBe('/game');
+		const container = screen.getByTestId('home-container');
+		const classes = container.className;
+		expect(classes).toContain('min-h-screen');
+		expect(classes).toContain('flex');
+		expect(classes).toContain('flex-col');
+		expect(classes).toContain('items-center');
+		expect(classes).toContain('justify-center');
 	});
 });
