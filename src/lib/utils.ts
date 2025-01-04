@@ -19,4 +19,16 @@ export function generateUUID(): string {
 		hex.slice(16, 20),
 		hex.slice(20)
 	].join('-')
-} 
+}
+
+export function isEmpty(value: Exclude<unknown, Map<unknown, unknown> | Set<unknown>>): boolean {
+	return typeof value === "undefined" || value === null ||
+		(Array.isArray(value) && value.length === 0) ||
+		(typeof value === "string" && value.length === 0) ||
+		(typeof value === "object" && Object.keys(value).length === 0) ||
+		(typeof value === "number" && value === 0) ||
+		(typeof value === "boolean" && value === false) ||
+		(typeof value === "symbol" && value === Symbol()) ||
+		(typeof value === "bigint" && value === BigInt(0)) ||
+		(typeof value === "function" && value === Function);
+}

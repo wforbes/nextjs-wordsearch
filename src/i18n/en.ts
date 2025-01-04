@@ -2,13 +2,12 @@ export const en = {
 	pages: {
 		home: {
 			title: 'Word Search Game',
-			subtitle: 'Ready to start finding words?',
-			startButton: 'Start Searching',
+			subtitle: 'Create an account or login to start playing!'
 		},
 		auth: {
 			signup: {
 				title: 'Sign up',
-				nameLabel: 'Full Name',
+				nameLabel: 'Username',
 				emailLabel: 'Email Address',
 				passwordLabel: 'Password',
 				submitButton: 'Sign Up',
@@ -19,6 +18,7 @@ export const en = {
 				emailLabel: 'Email Address',
 				passwordLabel: 'Password',
 				submitButton: 'Login',
+				signupSuccess: 'Account created, please Login to continue.',
 			},
 			signout: {
 				title: 'Signed Out',
@@ -26,13 +26,18 @@ export const en = {
 				returnHome: 'Return to Home Page',
 			},
 		},
+		dashboard: {
+			title: 'Dashboard',
+			subtitle: 'Ready to start word searching?',
+			startButton: 'Start Searching'
+		},
 		game: {
 			// Add game-related text when needed
 		},
 	},
 	components: {
 		navbar: {
-			title: 'Your App Name',
+			title: 'Word Search Game',
 			loginButton: 'Login',
 			signupButton: 'Sign Up',
 			logoutButton: 'Logout',

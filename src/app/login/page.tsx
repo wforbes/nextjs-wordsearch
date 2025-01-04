@@ -12,9 +12,12 @@ import {
 } from '@mui/material';
 import { en } from '@/i18n/en';
 import { signInAction } from '@/app/actions/auth'
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { isEmpty } from '@/lib/utils';
 
 export default function LoginPage() {
+	const searchParams = useSearchParams();
+	const redirectEmail = searchParams.get('email');
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const router = useRouter();
@@ -67,6 +70,11 @@ export default function LoginPage() {
 					<Typography component="h1" variant="h5">
 						{en.pages.auth.login.title}
 					</Typography>
+					{!isEmpty(redirectEmail) && (
+						<Alert severity="success" sx={{ mt: 2, width: '100%' }}>
+							{en.pages.auth.login.signupSuccess}
+						</Alert>
+					)}
 					{error && (
 						<Alert severity="error" sx={{ mt: 2, width: '100%' }}>
 							{error}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
 	Container,
 	Box,
@@ -16,6 +17,7 @@ import { signUpValidation, type SignUpInput } from './_lib/validation';
 import { signUp } from '@/app/actions/auth';
 
 export default function SignUpPage() {
+	const router = useRouter();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState(false);
@@ -51,6 +53,7 @@ export default function SignUpPage() {
 			const response = await signUp(data);
 			if (response.success) {
 				setSuccess(true);
+				router.push(`/login?email=${data.email}`);
 			} else {
 				setError(response.message);
 			}

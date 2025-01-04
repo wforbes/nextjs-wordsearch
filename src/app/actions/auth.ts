@@ -1,10 +1,11 @@
 'use server';
 
 import bcrypt from 'bcryptjs'
-import { supabase } from '@/lib/supabase'
 import { signUpValidation, type SignUpInput } from '@/app/signup/_lib/validation'
 import { generateUUID } from '@/lib/utils'
-import { signIn } from '@/auth'
+import { signIn, signOut } from '@/auth'
+import { createUser, getUserByEmail, userExistsByEmail } from '@/db/supabase/user'
+import { User } from '@/db/supabase/schema'
 
 // Consolidate error types and messages
 const AUTH_ERRORS = {
@@ -25,7 +26,7 @@ const AUTH_ERRORS = {
 type AuthError = typeof AUTH_ERRORS[keyof typeof AUTH_ERRORS]
 
 export async function signUp(data: SignUpInput) {
-	// Validate input
+	// validate input
 	const result = signUpValidation.safeParse(data)
 	if (!result.success) {
 		return {
@@ -35,14 +36,13 @@ export async function signUp(data: SignUpInput) {
 	}
 
 	try {
-		// Check if user already exists
-		const { data: existingUser } = await supabase
-			.from('users')
-			.select('id')
-			.eq('email', data.email.toLowerCase())
-			.single()
+		// check if user already exists
+		const { count } = await userExistsByEmail(data.email);
 
-		if (existingUser) {
+		if (count >= 1) {
+			if (count > 1) {
+				console.error('Multiple users found with the same email');
+			}
 			return {
 				success: false,
 				message: 'A user with this email already exists'
@@ -57,18 +57,16 @@ export async function signUp(data: SignUpInput) {
 		const now = new Date().toISOString()
 
 		// Create user
-		const { error: createError } = await supabase
-			.from('users')
-			.insert({
-				id: userId,
-				name: data.name,
-				email: data.email.toLowerCase(),
-				password: hashedPassword,
-				emailVerified: null,
-				image: null,
-				created_at: now,
-				updated_at: now
-			})
+		const { error: createError } = await createUser({
+			id: userId,
+			name: data.name,
+			email: data.email.toLowerCase(),
+			password: hashedPassword,
+			emailVerified: null,
+			image: null,
+			created_at: now,
+			updated_at: now
+		} as User)
 
 		if (createError) {
 			console.error('Error creating user:', createError)
@@ -104,11 +102,7 @@ type VerifyResult = {
 
 export async function verifyCredentials(email: string, password: string): Promise<VerifyResult> {
 	// Get user from database
-	const { data: user, error } = await supabase
-		.from('users')
-		.select('*')
-		.eq('email', email.toLowerCase())
-		.single()
+	const { data: user, error } = await getUserByEmail(email.toLowerCase())
 
 	if (error?.code === 'PGRST116') {  // Supabase code for no rows returned
 		return {
@@ -188,7 +182,6 @@ export async function signInAction(email: string, password: string) {
 }
 
 export async function signOutAction() {
-	const { signOut } = await import('@/auth')
 	await signOut({ redirectTo: '/signout' })
 	return { success: true }
 }
