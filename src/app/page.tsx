@@ -1,10 +1,17 @@
-"use client";
+"use server";
 
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { en } from "@/i18n/en";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 
-export default function Home() {
+export default async function Home() {
+
+	const user = await auth();
+	if (user) {
+		redirect('/dashboard');
+	}
 
 	return (
 		<div 
