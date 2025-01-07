@@ -7,7 +7,7 @@ import { signIn, signOut } from '@/auth'
 import { createUser, getUserByEmail, userExistsByEmail } from '@/db/supabase/user'
 import { User } from '@/db/supabase/schema'
 
-// Consolidate error types and messages
+// error types and messages
 const AUTH_ERRORS = {
 	USER_NOT_FOUND: {
 		type: 'user_not_found' as const,
@@ -49,14 +49,10 @@ export async function signUp(data: SignUpInput) {
 			}
 		}
 
-		// Hash password
 		const hashedPassword = await bcrypt.hash(data.password, 10)
-
-		// Generate unique ID
 		const userId = generateUUID()
 		const now = new Date().toISOString()
 
-		// Create user
 		const { error: createError } = await createUser({
 			id: userId,
 			name: data.name,

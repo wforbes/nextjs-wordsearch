@@ -28,11 +28,16 @@ export const en = {
 		},
 		dashboard: {
 			title: 'Dashboard',
-			subtitle: 'Ready to start word searching?',
-			startButton: 'Start Searching'
+			startButton: 'New Game',
+			savedGames: 'Saved Games',
+			loading: 'Loading saved games...',
+			noGames: 'No saved games found',
 		},
 		game: {
 			// Add game-related text when needed
+			saveButton: 'Save Game',
+			saveSuccess: 'Game saved successfully',
+			saveLoading: 'Saving...',
 		},
 	},
 	components: {

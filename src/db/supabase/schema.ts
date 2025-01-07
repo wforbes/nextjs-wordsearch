@@ -12,3 +12,13 @@ export const users = z.object({
 })
 
 export type User = z.infer<typeof users>
+
+export type SavedGame = {
+	id: string
+	user_id: string
+	grid_state: Cell[][]
+	word_locations: WordLocation[]
+	created_at: string
+	updated_at: string
+	completed: boolean
+}

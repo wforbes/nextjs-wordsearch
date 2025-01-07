@@ -1,10 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import { Container, Box, Typography, Button } from "@mui/material";
 import { en } from "@/i18n/en";
+import { ActiveGamesList } from "@/app/components/ActiveGamesList/ActiveGamesList";
 
 export default function DashboardPage() {
 	const router = useRouter();
@@ -14,21 +13,26 @@ export default function DashboardPage() {
 	};
 
 	return (
-		<div className="min-h-screen flex flex-col items-center justify-center">
+		
+		<Container
+			sx={{
+				display: 'flex',
+				flexDirection: 'column',
+				paddingTop: 2,
+				gap: 4
+			}}
+		>
 			<Box
 				sx={{
-					width: '100%',
 					display: 'flex',
-					flexDirection: 'column',
+					flexDirection: 'row',
 					alignItems: 'center',
-					gap: 4,
+					justifyContent: 'space-between',
+					gap: 4
 				}}
 			>
-				<Typography variant="h2" component="h1" gutterBottom>
+				<Typography variant="h2" component="h1">
 					{en.pages.dashboard.title}
-				</Typography>
-				<Typography variant="h5" component="h2" gutterBottom color="text.secondary">
-					{en.pages.dashboard.subtitle}
 				</Typography>
 				<Button
 					variant="contained"
@@ -43,6 +47,18 @@ export default function DashboardPage() {
 					{en.pages.dashboard.startButton}
 				</Button>
 			</Box>
-		</div>
+			
+			<Box
+				sx={{
+					width: '100%',
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					gap: 4,
+				}}
+			>
+				<ActiveGamesList />
+			</Box>
+		</Container>
 	);
 }
