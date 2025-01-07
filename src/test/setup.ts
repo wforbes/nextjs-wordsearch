@@ -28,4 +28,37 @@ beforeAll(() => {
 			useSearchParams,
 		};
 	});
+
+
+
+	vi.mock('next/server', () => ({
+		NextResponse: {
+			json: vi.fn(),
+			redirect: vi.fn(),
+		},
+	}));
+
+	vi.mock('next-auth', () => {
+		return {
+			default: vi.fn(() => Promise.resolve({ user: null })),
+			signIn: vi.fn(),
+			signOut: vi.fn(),
+			useSession: vi.fn(() => ({
+				data: null,
+				status: 'unauthenticated',
+			})),
+		};
+	});
+	
+	vi.mock('@/db/supabase', () => ({
+		supabase: {
+			from: vi.fn().mockReturnThis(),
+			select: vi.fn().mockReturnThis(),
+			insert: vi.fn().mockReturnThis(),
+			update: vi.fn().mockReturnThis(),
+			eq: vi.fn().mockReturnThis(),
+			single: vi.fn().mockReturnThis(),
+			order: vi.fn().mockReturnThis(),
+		}
+	}));
 });
