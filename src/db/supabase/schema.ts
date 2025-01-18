@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Cell, WordLocation } from "@/app/types/game"
 
 export const users = z.object({
 	id: z.string().uuid(),
