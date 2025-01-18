@@ -4,20 +4,32 @@ import { auth } from '@/auth'
 import { createSavedGame, updateSavedGame, getSavedGame, getAllSavedGames } from '@/db/supabase/saved_game'
 import { GameState, SavedGame, SavedGameSummary, WordLocation } from '@/app/types/game'
 
-export async function saveGame(gameState: GameState, gameId?: string) {
+// Add a reusable auth check
+async function checkAuth() {
     const session = await auth()
     if (!session?.user) {
         throw new Error('Not authenticated')
     }
+    return session.user
+}
+
+export async function saveGame(gameState: GameState, gameId?: string) {
+    const user = await checkAuth()
 
     try {
         if (gameId) {
-            const { data, error } = await updateSavedGame(gameId, session.user.id, gameState)
+            // Add ownership verification
+            const existing = await getSavedGame(gameId, user.id)
+            if (!existing.data) {
+                throw new Error('Game not found or access denied')
+            }
+
+            const { data, error } = await updateSavedGame(gameId, user.id, gameState)
             if (error) throw error
             return data
         }
 
-        const { data, error } = await createSavedGame(session.user.id, gameState)
+        const { data, error } = await createSavedGame(user.id, gameState)
         if (error) throw error
         return data
     } catch (error) {
@@ -27,16 +39,13 @@ export async function saveGame(gameState: GameState, gameId?: string) {
 }
 
 export async function loadGame(gameId: string): Promise<SavedGame> {
-    const session = await auth()
-    if (!session?.user) {
-        throw new Error('Not authenticated')
-    }
+    const user = await checkAuth()
 
-    const { data, error } = await getSavedGame(gameId, session.user.id)
+    const { data, error } = await getSavedGame(gameId, user.id)
 
     if (error || !data) {
         console.error('Error loading game:', error)
-        throw new Error('Failed to load game')
+        throw new Error('Game not found or access denied')
     }
 
     return data as SavedGame
