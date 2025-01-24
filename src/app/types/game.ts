@@ -39,9 +39,14 @@ export type SavedGameSummary = {
 	foundWords: number;
 };
 
+export type WordListItem = {
+	word: string;
+	active: boolean;
+};
+
 export type NewGameOptions = {
 	gridSize: number;
 	wordCount: number;
-	wordList: string[];
+	wordList: WordListItem[];
 	enableBackwardWords: boolean;
 };

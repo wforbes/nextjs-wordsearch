@@ -54,8 +54,10 @@ export function GameController({ onGameWon, gameKey, savedGameId, initialOptions
 		);
 
 		const selectedWords = [...validatedOptions.wordList]
+			.filter(item => item.active)  // Only use active words
 			.sort(() => Math.random() - 0.5)
-			.slice(0, validatedOptions.wordCount);
+			.slice(0, validatedOptions.wordCount)
+			.map(item => item.word);  // Extract just the word string
 
 		const newWordLocations: WordLocation[] = [];
 

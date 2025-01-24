@@ -1,4 +1,4 @@
-import { Cell, Position } from "../types/game";
+import { Cell, Position, WordListItem } from "../types/game";
 
 export const GRID_SIZE = 15;
 export const WORD_COUNT = 10;
@@ -6,7 +6,7 @@ export const SAMPLE_WORDS = [
 	"NEXT", "REACT", "TYPESCRIPT", "JAVASCRIPT", "TAILWIND",
 	"VERCEL", "WEB", "CODE", "GAME", "FUN", "PLAY", "GRID",
 	"WORD", "SEARCH", "FIND", "PUZZLE", "LEARN", "BUILD"
-];
+].map(word => ({ word, active: true }));
 
 export const ENABLE_BACKWARD_WORDS = true; // Feature flag for backward word placement
 
@@ -189,3 +189,21 @@ export function getValidSelection(cells: Position[]): Position[] {
 
 	return validCells;
 }
+
+export const calculateGridCapacity = (gridSize: number, wordList: WordListItem[]) => {
+	if (wordList.length === 0) return 0;
+	
+	const totalCells = gridSize * gridSize;
+	const avgWordLength = wordList.reduce((sum, item) => sum + item.word.length, 0) / wordList.length;
+	const effectiveLetterCount = avgWordLength * 0.8; // Account for intersections
+	const spacePerWord = effectiveLetterCount * 1.2; // Account for diagonal placements
+	
+	const theoreticalMax = Math.floor(totalCells / spacePerWord);
+	return Math.floor(theoreticalMax * 0.8); // Safety margin
+};
+
+export const isWordValidForGrid = (word: string, gridSize: number): boolean => {
+	// Word can't be longer than grid diagonal
+	const maxLength = Math.floor(Math.sqrt(2 * gridSize * gridSize));
+	return word.length <= maxLength && word.length >= 3;
+};
