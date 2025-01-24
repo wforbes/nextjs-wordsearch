@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Cell, Position, WordLocation } from "../../types/game";
-import { GRID_SIZE, getValidSelection } from "../../utils/gameUtils";
+import { getValidSelection } from "../../utils/gameUtils";
+
 
 type WordGridProps = {
 	grid: Cell[][];
@@ -52,7 +53,9 @@ export function WordGrid({ grid, onWordFound, wordLocations }: WordGridProps) {
 			<div
 				className="grid gap-0.5 bg-gray-200"
 				style={{
-					gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(0, 1fr))`,
+					gridTemplateColumns: `repeat(${grid.length}, minmax(30px, 1fr))`,
+					maxWidth: `${Math.min(grid.length * 40, 1000)}px`,
+					margin: '0 auto'
 				}}
 			>
 				{grid.map((row, rowIndex) =>
@@ -62,7 +65,7 @@ export function WordGrid({ grid, onWordFound, wordLocations }: WordGridProps) {
 							data-testid={`cell-${rowIndex}-${colIndex}`}
 							role="gridcell"
 							className={`w-8 h-8 flex items-center justify-center font-bold cursor-pointer select-none transition-colors
-                ${cell.isFound
+								${cell.isFound
 									? "bg-gray-300"
 									: selectedCells.some(
 										(sc) => sc.row === rowIndex && sc.col === colIndex
@@ -72,6 +75,12 @@ export function WordGrid({ grid, onWordFound, wordLocations }: WordGridProps) {
 											? "bg-green-100"
 											: "bg-white"
 								}`}
+							style={{
+								width: 'auto',
+								height: 'auto',
+								aspectRatio: '1 / 1',
+								fontSize: `${Math.max(12, Math.min(20, 24 - grid.length / 2))}px`
+							}}
 							onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
 							onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
 							onMouseUp={handleMouseUp}

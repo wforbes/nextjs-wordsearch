@@ -1,19 +1,22 @@
 "use client";
 
+import { useState } from 'react'
 import { useRouter } from "next/navigation";
 import { Container, Box, Typography, Button } from "@mui/material";
 import { en } from "@/i18n/en";
 import { ActiveGamesList } from "@/app/components/ActiveGamesList/ActiveGamesList";
+import { NewGameDialog } from '../components/NewGameDialog/NewGameDialog'
+import type { NewGameOptions } from '../types/game'
 
 export default function DashboardPage() {
+	const [showNewGameDialog, setShowNewGameDialog] = useState(false)
 	const router = useRouter();
 
-	const handleStartGame = () => {
-		router.push('/game');
-	};
+	const handleStartNewGame = async (options: NewGameOptions) => {
+		router.push(`/game?options=${encodeURIComponent(JSON.stringify(options))}`)
+	}
 
 	return (
-		
 		<Container
 			sx={{
 				display: 'flex',
@@ -37,7 +40,7 @@ export default function DashboardPage() {
 				<Button
 					variant="contained"
 					size="large"
-					onClick={handleStartGame}
+					onClick={() => setShowNewGameDialog(true)}
 					sx={{
 						px: 4,
 						py: 1.5,
@@ -47,7 +50,7 @@ export default function DashboardPage() {
 					{en.pages.dashboard.startButton}
 				</Button>
 			</Box>
-			
+
 			<Box
 				sx={{
 					width: '100%',
@@ -59,6 +62,12 @@ export default function DashboardPage() {
 			>
 				<ActiveGamesList />
 			</Box>
+
+			<NewGameDialog
+				isOpen={showNewGameDialog}
+				onClose={() => setShowNewGameDialog(false)}
+				onStartGame={handleStartNewGame}
+			/>
 		</Container>
 	);
 }

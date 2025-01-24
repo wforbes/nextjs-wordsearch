@@ -10,6 +10,8 @@ export default function GamePage() {
 	const [gameKey, setGameKey] = useState(0);
 	const searchParams = useSearchParams();
 	const savedGameId = searchParams.get('id');
+	const optionsParam = searchParams.get('options');
+	const gameOptions = optionsParam ? JSON.parse(decodeURIComponent(optionsParam)) : undefined;
 
 	const handleGameWon = () => {
 		setGameWon(true);
@@ -28,7 +30,8 @@ export default function GamePage() {
 					key={gameKey} 
 					gameKey={gameKey} 
 					onGameWon={handleGameWon}
-					savedGameId={savedGameId || undefined}
+					savedGameId={savedGameId}
+					initialOptions={gameOptions}
 				/>
 				{gameWon && <WinDialog onPlayAgain={handlePlayAgain} />}
 			</main>

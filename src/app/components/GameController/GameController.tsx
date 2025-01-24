@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { WordGrid } from "../WordGrid/WordGrid";
 import { WordList } from "../WordList/WordList";
-import { Cell, WordLocation } from "../../types/game";
+import { Cell, WordLocation, NewGameOptions } from "../../types/game";
 import { loadGame, saveGame } from "@/app/actions/game";
 import { en } from "@/i18n/en";
 import {
@@ -10,16 +10,19 @@ import {
 	SAMPLE_WORDS,
 	canPlaceWord,
 	placeWord,
+	ENABLE_BACKWARD_WORDS,
+	Direction,
 } from "../../utils/gameUtils";
 
 type GameControllerProps = {
 	onGameWon: () => void;
 	gameKey: number;
 	savedGameId?: string;
+	initialOptions?: NewGameOptions;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function GameController({ onGameWon, gameKey, savedGameId }: GameControllerProps) {
+export function GameController({ onGameWon, gameKey, savedGameId, initialOptions }: GameControllerProps) {
 	const [grid, setGrid] = useState<Cell[][]>([]);
 	const [wordLocations, setWordLocations] = useState<WordLocation[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -28,32 +31,47 @@ export function GameController({ onGameWon, gameKey, savedGameId }: GameControll
 	const isInitialized = useRef(false);
 
 	const initializeGame = useCallback(() => {
-		// Create empty grid
-		const newGrid: Cell[][] = Array(GRID_SIZE).fill(null).map(() =>
-			Array(GRID_SIZE).fill(null).map(() => ({
+		const gameOptions = initialOptions || {
+			gridSize: GRID_SIZE,
+			wordCount: WORD_COUNT,
+			wordList: SAMPLE_WORDS,
+			enableBackwardWords: ENABLE_BACKWARD_WORDS
+		};
+
+		// Validate grid size and word count
+		const validatedOptions = {
+			...gameOptions,
+			gridSize: Math.max(10, Math.min(20, gameOptions.gridSize)),
+			wordCount: Math.min(gameOptions.wordCount, Math.floor(gameOptions.gridSize * 1.5))
+		};
+
+		const newGrid: Cell[][] = Array(validatedOptions.gridSize).fill(null).map(() =>
+			Array(validatedOptions.gridSize).fill(null).map(() => ({
 				letter: "",
 				isSelected: false,
 				isFound: false,
 			}))
 		);
 
-		// Select random words
-		const selectedWords = [...SAMPLE_WORDS]
+		const selectedWords = [...validatedOptions.wordList]
 			.sort(() => Math.random() - 0.5)
-			.slice(0, WORD_COUNT);
+			.slice(0, validatedOptions.wordCount);
 
 		const newWordLocations: WordLocation[] = [];
 
-		// Place words in grid
 		selectedWords.forEach((word) => {
 			let placed = false;
 			let attempts = 0;
 			const maxAttempts = 100;
 
 			while (!placed && attempts < maxAttempts) {
-				const direction = Math.floor(Math.random() * 3);
-				const row = Math.floor(Math.random() * GRID_SIZE);
-				const col = Math.floor(Math.random() * GRID_SIZE);
+				const direction = validatedOptions.enableBackwardWords 
+					? Math.floor(Math.random() * Object.keys(Direction).length / 2)
+					: Math.floor(Math.random() * 3);
+				
+				// Use validated grid size for random position
+				const row = Math.floor(Math.random() * validatedOptions.gridSize);
+				const col = Math.floor(Math.random() * validatedOptions.gridSize);
 
 				if (canPlaceWord(word, row, col, direction, newGrid)) {
 					const cells = placeWord(word, row, col, direction, newGrid);
@@ -64,9 +82,9 @@ export function GameController({ onGameWon, gameKey, savedGameId }: GameControll
 			}
 		});
 
-		// Fill remaining cells with random letters
-		for (let i = 0; i < GRID_SIZE; i++) {
-			for (let j = 0; j < GRID_SIZE; j++) {
+		// Fill remaining cells
+		for (let i = 0; i < validatedOptions.gridSize; i++) {
+			for (let j = 0; j < validatedOptions.gridSize; j++) {
 				if (!newGrid[i][j].letter) {
 					newGrid[i][j].letter = String.fromCharCode(
 						65 + Math.floor(Math.random() * 26)
@@ -78,9 +96,8 @@ export function GameController({ onGameWon, gameKey, savedGameId }: GameControll
 		setGrid(newGrid);
 		setWordLocations(newWordLocations);
 		
-		// Return the new state
 		return { grid: newGrid, wordLocations: newWordLocations };
-	}, []);
+	}, [initialOptions]);
 
 	const loadSavedGame = useCallback(async (id: string) => {
 		setIsLoading(true);

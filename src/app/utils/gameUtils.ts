@@ -8,46 +8,142 @@ export const SAMPLE_WORDS = [
 	"WORD", "SEARCH", "FIND", "PUZZLE", "LEARN", "BUILD"
 ];
 
-export function canPlaceWord(
-	word: string,
-	row: number,
-	col: number,
-	direction: number,
-	grid: Cell[][]
-): boolean {
-	const dx = [1, 0, 1][direction];
-	const dy = [0, 1, 1][direction];
+export const ENABLE_BACKWARD_WORDS = true; // Feature flag for backward word placement
 
-	if (
-		row + dy * (word.length - 1) >= GRID_SIZE ||
-		col + dx * (word.length - 1) >= GRID_SIZE
-	)
-		return false;
-
-	for (let i = 0; i < word.length; i++) {
-		const currentCell = grid[row + dy * i][col + dx * i];
-		if (currentCell.letter && currentCell.letter !== word[i]) {
-			return false;
-		}
-	}
-
-	return true;
+export enum Direction {
+	HORIZONTAL_RIGHT = 0,
+	HORIZONTAL_LEFT = 1,
+	VERTICAL_DOWN = 2,
+	VERTICAL_UP = 3,
+	DIAGONAL_RIGHT_DOWN = 4,
+	DIAGONAL_RIGHT_UP = 5,
+	DIAGONAL_LEFT_DOWN = 6,
+	DIAGONAL_LEFT_UP = 7
 }
 
-export function placeWord(
-	word: string,
-	row: number,
-	col: number,
-	direction: number,
-	grid: Cell[][]
-): Position[] {
-	const dx = [1, 0, 1][direction];
-	const dy = [0, 1, 1][direction];
-	const cells: Position[] = [];
+export function canPlaceWord(word: string, row: number, col: number, direction: Direction, grid: Cell[][]): boolean {
+	const length = word.length;
+	
+	switch (direction) {
+		case Direction.HORIZONTAL_RIGHT:
+			if (col + length > GRID_SIZE) return false;
+			for (let i = 0; i < length; i++) {
+				if (grid[row][col + i].letter && grid[row][col + i].letter !== word[i]) return false;
+			}
+			return true;
 
-	for (let i = 0; i < word.length; i++) {
-		grid[row + dy * i][col + dx * i].letter = word[i];
-		cells.push({ row: row + dy * i, col: col + dx * i });
+		case Direction.HORIZONTAL_LEFT:
+			if (col - length + 1 < 0) return false;
+			for (let i = 0; i < length; i++) {
+				if (grid[row][col - i].letter && grid[row][col - i].letter !== word[i]) return false;
+			}
+			return true;
+
+		case Direction.VERTICAL_DOWN:
+			if (row + length > GRID_SIZE) return false;
+			for (let i = 0; i < length; i++) {
+				if (grid[row + i][col].letter && grid[row + i][col].letter !== word[i]) return false;
+			}
+			return true;
+
+		case Direction.VERTICAL_UP:
+			if (row - length + 1 < 0) return false;
+			for (let i = 0; i < length; i++) {
+				if (grid[row - i][col].letter && grid[row - i][col].letter !== word[i]) return false;
+			}
+			return true;
+
+		case Direction.DIAGONAL_RIGHT_DOWN:
+			if (col + length > GRID_SIZE || row + length > GRID_SIZE) return false;
+			for (let i = 0; i < length; i++) {
+				if (grid[row + i][col + i].letter && grid[row + i][col + i].letter !== word[i]) return false;
+			}
+			return true;
+
+		case Direction.DIAGONAL_RIGHT_UP:
+			if (col + length > GRID_SIZE || row - length + 1 < 0) return false;
+			for (let i = 0; i < length; i++) {
+				if (grid[row - i][col + i].letter && grid[row - i][col + i].letter !== word[i]) return false;
+			}
+			return true;
+
+		case Direction.DIAGONAL_LEFT_DOWN:
+			if (col - length + 1 < 0 || row + length > GRID_SIZE) return false;
+			for (let i = 0; i < length; i++) {
+				if (grid[row + i][col - i].letter && grid[row + i][col - i].letter !== word[i]) return false;
+			}
+			return true;
+
+		case Direction.DIAGONAL_LEFT_UP:
+			if (col - length + 1 < 0 || row - length + 1 < 0) return false;
+			for (let i = 0; i < length; i++) {
+				if (grid[row - i][col - i].letter && grid[row - i][col - i].letter !== word[i]) return false;
+			}
+			return true;
+	}
+	return false;
+}
+
+export function placeWord(word: string, row: number, col: number, direction: Direction, grid: Cell[][]): { row: number; col: number; }[] {
+	const cells: { row: number; col: number; }[] = [];
+	const length = word.length;
+
+	switch (direction) {
+		case Direction.HORIZONTAL_RIGHT:
+			for (let i = 0; i < length; i++) {
+				grid[row][col + i].letter = word[i];
+				cells.push({ row, col: col + i });
+			}
+			break;
+
+		case Direction.HORIZONTAL_LEFT:
+			for (let i = 0; i < length; i++) {
+				grid[row][col - i].letter = word[i];
+				cells.push({ row, col: col - i });
+			}
+			break;
+
+		case Direction.VERTICAL_DOWN:
+			for (let i = 0; i < length; i++) {
+				grid[row + i][col].letter = word[i];
+				cells.push({ row: row + i, col });
+			}
+			break;
+
+		case Direction.VERTICAL_UP:
+			for (let i = 0; i < length; i++) {
+				grid[row - i][col].letter = word[i];
+				cells.push({ row: row - i, col });
+			}
+			break;
+
+		case Direction.DIAGONAL_RIGHT_DOWN:
+			for (let i = 0; i < length; i++) {
+				grid[row + i][col + i].letter = word[i];
+				cells.push({ row: row + i, col: col + i });
+			}
+			break;
+
+		case Direction.DIAGONAL_RIGHT_UP:
+			for (let i = 0; i < length; i++) {
+				grid[row - i][col + i].letter = word[i];
+				cells.push({ row: row - i, col: col + i });
+			}
+			break;
+
+		case Direction.DIAGONAL_LEFT_DOWN:
+			for (let i = 0; i < length; i++) {
+				grid[row + i][col - i].letter = word[i];
+				cells.push({ row: row + i, col: col - i });
+			}
+			break;
+
+		case Direction.DIAGONAL_LEFT_UP:
+			for (let i = 0; i < length; i++) {
+				grid[row - i][col - i].letter = word[i];
+				cells.push({ row: row - i, col: col - i });
+			}
+			break;
 	}
 
 	return cells;
