@@ -19,7 +19,7 @@ import {
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import InfoIcon from '@mui/icons-material/Info'
-import { GRID_SIZE, WORD_COUNT, SAMPLE_WORDS, ENABLE_BACKWARD_WORDS, calculateGridCapacity, isWordValidForGrid } from '@/app/utils/gameUtils'
+import { GRID_SIZE, WORD_COUNT, SAMPLE_WORDS, ENABLE_BACKWARD_WORDS, calculateGridCapacity, isWordValidForGrid, validateWord } from '@/app/utils/gameUtils'
 import { NewGameOptions, WordListItem } from '@/app/types/game'
 
 type NewGameDialogProps = {
@@ -34,6 +34,7 @@ export function NewGameDialog({ isOpen, onClose, onStartGame }: NewGameDialogPro
     const [wordList, setWordList] = useState<WordListItem[]>(SAMPLE_WORDS)
     const [enableBackwardWords, setEnableBackwardWords] = useState(ENABLE_BACKWARD_WORDS)
     const [customWord, setCustomWord] = useState('')
+    const [validationError, setValidationError] = useState<string | null>(null)
 
     const activeWordCount = useMemo(() => 
         wordList.filter(item => item.active).length,
@@ -144,19 +145,25 @@ export function NewGameDialog({ isOpen, onClose, onStartGame }: NewGameDialogPro
     }, [wordCount, activeWordCount, activateNextInactiveWord]);
 
     const handleAddWord = () => {
-        if (customWord && !wordList.some(item => item.word === customWord.toUpperCase())) {
-            if (!isWordValidForGrid(customWord, gridSize)) {
-                // Show error message (TODO: add a Snackbar or helper text)
-                return;
-            }
-            // Only set as active if we haven't hit word count limit
-            const active = activeWordCount < wordCount;
-            setWordList([...wordList, { 
-                word: customWord.toUpperCase(), 
-                active 
-            }]);
-            setCustomWord('');
+        if (!customWord) return;
+        
+        const upperWord = customWord.toUpperCase();
+        if (wordList.some(item => item.word === upperWord)) {
+            setValidationError('Word already exists in list');
+            return;
         }
+
+        const validation = validateWord(upperWord, gridSize);
+        if (!validation.isValid) {
+            setValidationError(validation.error);
+            return;
+        }
+
+        // Only set as active if we haven't hit word count limit
+        const active = activeWordCount < wordCount;
+        setWordList([...wordList, { word: upperWord, active }]);
+        setCustomWord('');
+        setValidationError(null);
     };
 
     const handleRemoveWord = (wordToRemove: string) => {
@@ -287,21 +294,28 @@ export function NewGameDialog({ isOpen, onClose, onStartGame }: NewGameDialogPro
                                     {activeWordCount} active / {wordList.length} total
                                 </Typography>
                             </Box>
-                            <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                                <TextField
-                                    size="small"
-                                    value={customWord}
-                                    onChange={(e) => setCustomWord(e.target.value.toUpperCase())}
-                                    placeholder="Add custom word"
-                                    inputProps={{ pattern: "[A-Za-z]+" }}
-                                />
-                                <Button
-                                    variant="contained"
-                                    onClick={handleAddWord}
-                                    disabled={!customWord}
-                                >
-                                    Add
-                                </Button>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
+                                <Box sx={{ display: 'flex', gap: 1 }}>
+                                    <TextField
+                                        size="small"
+                                        value={customWord}
+                                        onChange={(e) => {
+                                            setCustomWord(e.target.value.toUpperCase());
+                                            setValidationError(null);
+                                        }}
+                                        placeholder="Add custom word"
+                                        error={!!validationError}
+                                        helperText={validationError}
+                                        inputProps={{ pattern: "[A-Za-z]+" }}
+                                    />
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleAddWord}
+                                        disabled={!customWord}
+                                    >
+                                        Add
+                                    </Button>
+                                </Box>
                             </Box>
                             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
                                 Check/uncheck words to include them in the game. 

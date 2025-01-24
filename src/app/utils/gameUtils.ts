@@ -202,8 +202,46 @@ export const calculateGridCapacity = (gridSize: number, wordList: WordListItem[]
 	return Math.floor(theoreticalMax * 0.8); // Safety margin
 };
 
+export const MIN_WORD_LENGTH = 3;
+export const MAX_WORD_LENGTH = 15;  // Absolute maximum regardless of grid
+
+export const validateWord = (word: string, gridSize: number): { 
+    isValid: boolean; 
+    error?: string;
+} => {
+    if (!word || word.length < MIN_WORD_LENGTH) {
+        return { 
+            isValid: false, 
+            error: `Word must be at least ${MIN_WORD_LENGTH} letters long` 
+        };
+    }
+
+    if (word.length > MAX_WORD_LENGTH) {
+        return { 
+            isValid: false, 
+            error: `Word cannot be longer than ${MAX_WORD_LENGTH} letters` 
+        };
+    }
+
+    const maxGridLength = Math.floor(Math.sqrt(2 * gridSize * gridSize));
+    if (word.length > maxGridLength) {
+        return { 
+            isValid: false, 
+            error: `Word too long for ${gridSize}x${gridSize} grid (max: ${maxGridLength} letters)` 
+        };
+    }
+
+    if (!/^[A-Z]+$/.test(word)) {
+        return { 
+            isValid: false, 
+            error: 'Word can only contain letters' 
+        };
+    }
+
+    return { isValid: true };
+};
+
 export const isWordValidForGrid = (word: string, gridSize: number): boolean => {
-	// Word can't be longer than grid diagonal
-	const maxLength = Math.floor(Math.sqrt(2 * gridSize * gridSize));
-	return word.length <= maxLength && word.length >= 3;
+    const validation = validateWord(word, gridSize);
+    return validation.isValid;
 };
