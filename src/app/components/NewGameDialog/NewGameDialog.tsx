@@ -15,7 +15,8 @@ import {
     ListItemText,
     IconButton,
     Typography,
-    Tooltip
+    Tooltip,
+    Grid2
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import InfoIcon from '@mui/icons-material/Info'
@@ -242,162 +243,168 @@ export function NewGameDialog({ isOpen, onClose, onStartGame }: NewGameDialogPro
         <Dialog 
             open={isOpen} 
             onClose={onClose}
-            maxWidth="sm"
+            maxWidth="md"
             fullWidth
         >
             <DialogTitle>New Game Settings</DialogTitle>
             <form onSubmit={handleSubmit}>
                 <DialogContent>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                        <Box>
-                            <Typography gutterBottom>
-                                Grid Size: {gridSize}x{gridSize}
-                            </Typography>
-                            <Slider
-                                value={gridSize}
-                                onChange={(_, value) => setGridSize(value as number)}
-                                min={10}
-                                max={20}
-                                marks
-                                valueLabelDisplay="auto"
-                            />
-                            <Typography variant="caption" color="text.secondary">
-                                Current grid can fit approximately {maxWordsForGrid} words
-                            </Typography>
-                            {invalidWords.length > 0 && (
-                                <Typography variant="caption" color="error">
-                                    {invalidWords.length} word(s) too long for current grid size
-                                </Typography>
-                            )}
-                        </Box>
-
-                        <Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography gutterBottom>
-                                    Number of Words: {wordCount} 
-                                </Typography>
-                                <Tooltip title="This controls how many active words will be used in the game">
-                                    <InfoIcon fontSize="small" color="action" />
-                                </Tooltip>
-                            </Box>
-                            <Slider
-                                value={wordCount}
-                                onChange={handleWordCountChange}
-                                min={1}
-                                max={Math.min(maxWordsForGrid, wordList.length)}
-                                marks
-                                valueLabelDisplay="auto"
-                                disabled={wordList.length === 0}
-                            />
-                            <Typography 
-                                variant="caption" 
-                                color={activeWordCount < wordCount ? "error" : "text.secondary"}
-                            >
-                                {activeWordCount} words active out of {wordList.length} total
-                                {activeWordCount < wordCount && 
-                                    ` (need ${wordCount - activeWordCount} more active words)`}
-                            </Typography>
-                        </Box>
-
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={enableBackwardWords}
-                                    onChange={(e) => setEnableBackwardWords(e.target.checked)}
-                                />
-                            }
-                            label="Enable Backward Words"
-                        />
-
-                        <Box>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                                <Typography>Word List</Typography>
-                                <Typography variant="caption" color="text.secondary">
-                                    {activeWordCount} active / {wordList.length} total
-                                </Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
-                                <Box sx={{ display: 'flex', gap: 1 }}>
-                                    <TextField
-                                        size="small"
-                                        value={customWord}
-                                        onChange={(e) => {
-                                            setCustomWord(e.target.value.toUpperCase());
-                                            setValidationError(null);
-                                        }}
-                                        onKeyDown={handleKeyDown}
-                                        placeholder="Add custom word"
-                                        error={!!validationError}
-                                        helperText={validationError}
-                                        inputProps={{ pattern: "[A-Za-z]+" }}
+                    <Grid2 container spacing={3}>
+                        <Grid2 size={{xs:12, md:5}}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                                <Box>
+                                    <Typography gutterBottom>
+                                        Grid Size: {gridSize}x{gridSize}
+                                    </Typography>
+                                    <Slider
+                                        value={gridSize}
+                                        onChange={(_, value) => setGridSize(value as number)}
+                                        min={10}
+                                        max={20}
+                                        marks
+                                        valueLabelDisplay="auto"
                                     />
-                                    <Button
-                                        variant="contained"
-                                        onClick={handleAddWord}
-                                        disabled={!customWord}
-                                        onKeyDown={handleKeyDown}
-                                        type="button"
-                                    >
-                                        Add
-                                    </Button>
+                                    <Typography variant="caption" color="text.secondary">
+                                        Current grid can fit approximately {maxWordsForGrid} words
+                                    </Typography>
+                                    {invalidWords.length > 0 && (
+                                        <Typography variant="caption" color="error">
+                                            {invalidWords.length} word(s) too long for current grid size
+                                        </Typography>
+                                    )}
                                 </Box>
-                            </Box>
-                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-                                Check/uncheck words to include them in the game. 
-                                Only {wordCount} checked words will be used.
-                            </Typography>
-                            <List
-                                sx={{
-                                    maxHeight: 200,
-                                    overflow: 'auto',
-                                    border: 1,
-                                    borderColor: 'divider',
-                                    borderRadius: 1
-                                }}
-                            >
-                                {wordList.map(item => (
-                                    <ListItem
-                                        key={item.word}
-                                        secondaryAction={
-                                            <IconButton
-                                                edge="end"
-                                                aria-label="delete"
-                                                onClick={() => handleRemoveWord(item.word)}
-                                            >
-                                                <DeleteIcon />
-                                            </IconButton>
-                                        }
-                                        sx={{
-                                            opacity: item.active ? 1 : 0.5,
-                                            transition: 'opacity 0.2s'
-                                        }}
+
+                                <Box>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                        <Typography gutterBottom>
+                                            Number of Words: {wordCount} 
+                                        </Typography>
+                                        <Tooltip title="This controls how many active words will be used in the game">
+                                            <InfoIcon fontSize="small" color="action" />
+                                        </Tooltip>
+                                    </Box>
+                                    <Slider
+                                        value={wordCount}
+                                        onChange={handleWordCountChange}
+                                        min={1}
+                                        max={Math.min(maxWordsForGrid, wordList.length)}
+                                        marks
+                                        valueLabelDisplay="auto"
+                                        disabled={wordList.length === 0}
+                                    />
+                                    <Typography 
+                                        variant="caption" 
+                                        color={activeWordCount < wordCount ? "error" : "text.secondary"}
                                     >
+                                        {activeWordCount} words active out of {wordList.length} total
+                                        {activeWordCount < wordCount && 
+                                            ` (need ${wordCount - activeWordCount} more active words)`}
+                                    </Typography>
+                                </Box>
+
+                                <FormControlLabel
+                                    control={
                                         <Checkbox
-                                            edge="start"
-                                            checked={item.active}
-                                            onChange={() => handleToggleWord(item.word)}
-                                            disabled={!isWordValidForGrid(item.word, gridSize)}
-                                            sx={{ mr: 1 }}
+                                            checked={enableBackwardWords}
+                                            onChange={(e) => setEnableBackwardWords(e.target.checked)}
                                         />
-                                        <ListItemText 
-                                            primary={item.word}
-                                            secondary={
-                                                !isWordValidForGrid(item.word, gridSize)
-                                                    ? `Too long for ${gridSize}x${gridSize} grid`
-                                                    : !item.active && "Inactive - won't be used in game"
+                                    }
+                                    label="Enable Backward Words"
+                                />
+                            </Box>
+                        </Grid2>
+
+                        <Grid2 size={{xs:12, md:7}}>
+                            <Box>
+                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                                    <Typography>Word List</Typography>
+                                    <Typography variant="caption" color="text.secondary">
+                                        {activeWordCount} active / {wordList.length} total
+                                    </Typography>
+                                </Box>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
+                                    <Box sx={{ display: 'flex', gap: 1 }}>
+                                        <TextField
+                                            size="small"
+                                            value={customWord}
+                                            onChange={(e) => {
+                                                setCustomWord(e.target.value.toUpperCase());
+                                                setValidationError(null);
+                                            }}
+                                            onKeyDown={handleKeyDown}
+                                            placeholder="Add custom word"
+                                            error={!!validationError}
+                                            helperText={validationError}
+                                            inputProps={{ pattern: "[A-Za-z]+" }}
+                                        />
+                                        <Button
+                                            variant="contained"
+                                            onClick={handleAddWord}
+                                            disabled={!customWord}
+                                            onKeyDown={handleKeyDown}
+                                            type="button"
+                                        >
+                                            Add
+                                        </Button>
+                                    </Box>
+                                </Box>
+                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                                    Check/uncheck words to include them in the game. 
+                                    Only {wordCount} checked words will be used.
+                                </Typography>
+                                <List
+                                    sx={{
+                                        maxHeight: 200,
+                                        overflow: 'auto',
+                                        border: 1,
+                                        borderColor: 'divider',
+                                        borderRadius: 1
+                                    }}
+                                >
+                                    {wordList.map(item => (
+                                        <ListItem
+                                            key={item.word}
+                                            secondaryAction={
+                                                <IconButton
+                                                    edge="end"
+                                                    aria-label="delete"
+                                                    onClick={() => handleRemoveWord(item.word)}
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
                                             }
                                             sx={{
-                                                color: item.active ? 'text.primary' : 'text.secondary',
-                                                '& .MuiListItemText-secondary': {
-                                                    fontSize: '0.75rem'
-                                                }
+                                                opacity: item.active ? 1 : 0.5,
+                                                transition: 'opacity 0.2s'
                                             }}
-                                        />
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </Box>
-                    </Box>
+                                        >
+                                            <Checkbox
+                                                edge="start"
+                                                checked={item.active}
+                                                onChange={() => handleToggleWord(item.word)}
+                                                disabled={!isWordValidForGrid(item.word, gridSize)}
+                                                sx={{ mr: 1 }}
+                                            />
+                                            <ListItemText 
+                                                primary={item.word}
+                                                secondary={
+                                                    !isWordValidForGrid(item.word, gridSize)
+                                                        ? `Too long for ${gridSize}x${gridSize} grid`
+                                                        : !item.active && "Inactive - won't be used in game"
+                                                }
+                                                sx={{
+                                                    color: item.active ? 'text.primary' : 'text.secondary',
+                                                    '& .MuiListItemText-secondary': {
+                                                        fontSize: '0.75rem'
+                                                    }
+                                                }}
+                                            />
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Box>
+                        </Grid2>
+                    </Grid2>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onClose}>Cancel</Button>
