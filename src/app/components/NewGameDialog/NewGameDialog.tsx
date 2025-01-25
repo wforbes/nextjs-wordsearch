@@ -36,6 +36,18 @@ export function NewGameDialog({ isOpen, onClose, onStartGame }: NewGameDialogPro
     const [customWord, setCustomWord] = useState('')
     const [validationError, setValidationError] = useState<string | null>(null)
 
+    // Reset state when dialog closes
+    useEffect(() => {
+        if (!isOpen) {
+            setGridSize(GRID_SIZE);
+            setWordCount(WORD_COUNT);
+            setWordList(SAMPLE_WORDS);
+            setEnableBackwardWords(ENABLE_BACKWARD_WORDS);
+            setCustomWord('');
+            setValidationError(null);
+        }
+    }, [isOpen]);
+
     const activeWordCount = useMemo(() => 
         wordList.filter(item => item.active).length,
         [wordList]
@@ -47,7 +59,7 @@ export function NewGameDialog({ isOpen, onClose, onStartGame }: NewGameDialogPro
         [gridSize, wordList]
     );
 
-    // Add validation for word lengths
+    // validation for word lengths
     const invalidWords = useMemo(() => 
         wordList.filter(item => !isWordValidForGrid(item.word, gridSize)),
         [wordList, gridSize]
@@ -216,6 +228,16 @@ export function NewGameDialog({ isOpen, onClose, onStartGame }: NewGameDialogPro
         return activeWords.length === 0 || activeWords.length < Math.min(wordCount, 1);
     }, [wordList, wordCount]);
 
+    // keydown handler for TextField
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Prevent form submission
+            if (customWord) {
+                handleAddWord();
+            }
+        }
+    };
+
     return (
         <Dialog 
             open={isOpen} 
@@ -303,6 +325,7 @@ export function NewGameDialog({ isOpen, onClose, onStartGame }: NewGameDialogPro
                                             setCustomWord(e.target.value.toUpperCase());
                                             setValidationError(null);
                                         }}
+                                        onKeyDown={handleKeyDown}
                                         placeholder="Add custom word"
                                         error={!!validationError}
                                         helperText={validationError}
@@ -312,6 +335,8 @@ export function NewGameDialog({ isOpen, onClose, onStartGame }: NewGameDialogPro
                                         variant="contained"
                                         onClick={handleAddWord}
                                         disabled={!customWord}
+                                        onKeyDown={handleKeyDown}
+                                        type="button"
                                     >
                                         Add
                                     </Button>
@@ -377,7 +402,7 @@ export function NewGameDialog({ isOpen, onClose, onStartGame }: NewGameDialogPro
                 <DialogActions>
                     <Button onClick={onClose}>Cancel</Button>
                     <Button 
-                        type="submit" 
+                        type="submit"
                         variant="contained"
                         disabled={isStartDisabled}
                     >
